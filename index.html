@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cat Burglar</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #182c27; display: grid; place-items: center; height: 100vh; }
+        canvas { display: block; width: min(100vw, 142.85vh); height: min(100vh, 70vw); }
+        #error { position: absolute; bottom: 0; color: white; background: #8a2929; padding: 12px; }
+    </style>
+</head>
+<body>
+    <canvas id="canv" tabindex="0" aria-label="Cat Burglar. Enter to start, WASD or arrows to move, R to restart, Escape to pause."></canvas>
+    <p id="error" role="alert" hidden></p>
+    <script>
+        // Keep startup failures visible instead of showing a blank screen.
+        window.addEventListener('error', event => {
+            const message = document.querySelector('#error');
+            message.hidden = false;
+            message.textContent = event.message || 'A game file could not load. Keep ideal-engine beside this folder.';
+        }, true);
+    </script>
+
+    <script src="../ideal-engine/engine/Vector2.js"></script>
+    <script src="../ideal-engine/engine/Input.js"></script>
+    <script src="../ideal-engine/engine/Engine.js"></script>
+    <script src="../ideal-engine/engine/Component.js"></script>
+    <script src="../ideal-engine/engine/GameObject.js"></script>
+    <script src="../ideal-engine/engine/Scene.js"></script>
+    <script src="../ideal-engine/engine/SceneManager.js"></script>
+    <script src="../ideal-engine/engine/Time.js"></script>
+    <script src="../ideal-engine/engine/Collisions.js"></script>
+    <script src="../ideal-engine/engine/components/Transform.js"></script>
+    <script src="../ideal-engine/engine/components/TextLabel.js"></script>
+    <script src="../ideal-engine/engine/components/Polygon.js"></script>
+    <script src="../ideal-engine/engine/components/Collider.js"></script>
+    <script src="../ideal-engine/engine/components/RigidBody.js"></script>
+
+    <script src="components/CatController.js"></script>
+    <script src="components/GuardController.js"></script>
+    <script src="components/SpriteController.js"></script>
+    <script src="components/HudController.js"></script>
+    <script src="components/TrapController.js"></script>
+    <script src="components/LootBagController.js"></script>
+
+    <script src="gameObjects/LootBagGameObject.js"></script>
+    <script src="gameObjects/CatGameObject.js"></script>
+    <script src="gameObjects/GuardGameObject.js"></script>
+    <script src="gameObjects/LootGameObject.js"></script>
+    <script src="gameObjects/WallGameObject.js"></script>
+    <script src="gameObjects/HudGameObject.js"></script>
+    <script src="gameObjects/MessageGameObject.js"></script>
+    <script src="gameObjects/TrapGameObject.js"></script>
+
+    <script src="scenes/ScreenScene.js"></script>
+    <script src="scenes/MenuScene.js"></script>
+    <script src="scenes/InstructionsScene.js"></script>
+    <script src="scenes/CreditsScene.js"></script>
+    <script src="scenes/BriefingScene.js"></script>
+    <script src="scenes/IntermissionScene.js"></script>
+    <script src="scenes/GameOverScene.js"></script>
+    <script src="scenes/WinScene.js"></script>
+    <script src="scenes/MainScene.js"></script>
+
+    <script src="Globals.js"></script>
+    <script src="Assets.js"></script>
+    <script src="Levels.js"></script>
+
+    <script>
+        SceneManager.currentScene = new MenuScene();
+        Engine.start();
+
+        // Canvas menus handle their own clicks; engine mouse colliders are unused.
+        window.removeEventListener('mousedown', Input.mouseDown);
+        window.removeEventListener('mouseup', Input.mouseUp);
+        const canvas = document.querySelector('#canv');
+        canvas.addEventListener('click', event => {
+            canvas.focus();
+            const bounds = canvas.getBoundingClientRect();
+            // Convert the click from page pixels into the game's 800 × 560 coordinates.
+            SceneManager.currentScene.click?.(
+                (event.clientX - bounds.left) * Globals.width / bounds.width,
+                (event.clientY - bounds.top) * Globals.height / bounds.height
+            );
+        });
+        window.addEventListener('keydown', event => {
+            if (event.code.startsWith('Arrow')) event.preventDefault();
+        });
+        function pauseGame() {
+            Input.keysDown = [];
+            Input.keysDownThisFrame = [];
+            const scene = SceneManager.currentScene;
+            if (scene.state === 'playing') scene.primary();
+        }
+        window.addEventListener('blur', pauseGame);
+        document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
+    </script>
+</body>
+</html>
