@@ -7,7 +7,7 @@ class HudController extends Component {
       loot: 'LOOT  ' + scene.points + ' / ' + scene.loot.length,
       level: 'LEVEL  ' + (Globals.levelIndex + 1) + ' / ' + LEVELS.length,
       objective: scene.state === 'paused' ? 'PAUSED — Resume when you are ready.' :
-        scene.points === scene.loot.length ? 'All loot collected! Reach the green exit.' :
+        scene.points === scene.loot.length ? 'All loot collected! Reach the green exit door.' :
         'Collect every diamond. Avoid the guards.'
     };
     this.gameObject.getComponent(TextLabel).text = labels[this.kind];

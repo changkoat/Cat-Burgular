@@ -1,5 +1,5 @@
 class CatController extends Component {
-  speed = 170;
+  speed = 221;
 
   update() {
     const scene = this.gameObject.scene;
@@ -26,9 +26,6 @@ class CatController extends Component {
       if (!item.markForDestroy && scene.overlaps(this.gameObject, item)) {
         item.destroy(); scene.points++;
       }
-    }
-    if (scene.points === scene.loot.length && scene.overlaps(this.gameObject, scene.exit)) {
-      scene.finish(true);
     }
   }
 

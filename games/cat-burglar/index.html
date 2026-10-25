@@ -18,25 +18,25 @@
         window.addEventListener('error', event => {
             const message = document.querySelector('#error');
             message.hidden = false;
-            message.textContent = event.message || 'A game file could not load. Keep ideal-engine beside this folder.';
+            message.textContent = event.message || 'A game file could not load. Keep the engine and games folders together.';
         }, true);
     </script>
+    <!-- Engine -->
+    <script src="../../engine/Vector2.js"></script>
+    <script src="../../engine/Input.js"></script>
+    <script src="../../engine/Engine.js"></script>
+    <script src="../../engine/Component.js"></script>
+    <script src="../../engine/GameObject.js"></script>
+    <script src="../../engine/Scene.js"></script>
+    <script src="../../engine/SceneManager.js"></script>
+    <script src="../../engine/Time.js"></script>
+    <script src="../../engine/Collisions.js"></script>
+    <script src="../../engine/components/Transform.js"></script>
+    <script src="../../engine/components/TextLabel.js"></script>
+    <script src="../../engine/components/Polygon.js"></script>
 
-    <script src="../ideal-engine/engine/Vector2.js"></script>
-    <script src="../ideal-engine/engine/Input.js"></script>
-    <script src="../ideal-engine/engine/Engine.js"></script>
-    <script src="../ideal-engine/engine/Component.js"></script>
-    <script src="../ideal-engine/engine/GameObject.js"></script>
-    <script src="../ideal-engine/engine/Scene.js"></script>
-    <script src="../ideal-engine/engine/SceneManager.js"></script>
-    <script src="../ideal-engine/engine/Time.js"></script>
-    <script src="../ideal-engine/engine/Collisions.js"></script>
-    <script src="../ideal-engine/engine/components/Transform.js"></script>
-    <script src="../ideal-engine/engine/components/TextLabel.js"></script>
-    <script src="../ideal-engine/engine/components/Polygon.js"></script>
-    <script src="../ideal-engine/engine/components/Collider.js"></script>
-    <script src="../ideal-engine/engine/components/RigidBody.js"></script>
-
+    <!-- Components -->
+    <script src="components/DoorController.js"></script>
     <script src="components/CatController.js"></script>
     <script src="components/GuardController.js"></script>
     <script src="components/SpriteController.js"></script>
@@ -44,6 +44,8 @@
     <script src="components/TrapController.js"></script>
     <script src="components/LootBagController.js"></script>
 
+    <!-- Game Objects -->
+    <script src="gameObjects/DoorGameObject.js"></script>
     <script src="gameObjects/LootBagGameObject.js"></script>
     <script src="gameObjects/CatGameObject.js"></script>
     <script src="gameObjects/GuardGameObject.js"></script>
@@ -53,32 +55,30 @@
     <script src="gameObjects/MessageGameObject.js"></script>
     <script src="gameObjects/TrapGameObject.js"></script>
 
+    <!-- Scene -->
     <script src="scenes/ScreenScene.js"></script>
     <script src="scenes/MenuScene.js"></script>
     <script src="scenes/InstructionsScene.js"></script>
     <script src="scenes/CreditsScene.js"></script>
     <script src="scenes/BriefingScene.js"></script>
-    <script src="scenes/IntermissionScene.js"></script>
     <script src="scenes/GameOverScene.js"></script>
     <script src="scenes/WinScene.js"></script>
     <script src="scenes/MainScene.js"></script>
+
 
     <script src="Globals.js"></script>
     <script src="Assets.js"></script>
     <script src="Levels.js"></script>
 
     <script>
-        SceneManager.currentScene = new MenuScene();
-        Engine.start();
+        Engine.start(MenuScene);
 
-        // Canvas menus handle their own clicks; engine mouse colliders are unused.
         window.removeEventListener('mousedown', Input.mouseDown);
         window.removeEventListener('mouseup', Input.mouseUp);
         const canvas = document.querySelector('#canv');
         canvas.addEventListener('click', event => {
             canvas.focus();
             const bounds = canvas.getBoundingClientRect();
-            // Convert the click from page pixels into the game's 800 × 560 coordinates.
             SceneManager.currentScene.click?.(
                 (event.clientX - bounds.left) * Globals.width / bounds.width,
                 (event.clientY - bounds.top) * Globals.height / bounds.height

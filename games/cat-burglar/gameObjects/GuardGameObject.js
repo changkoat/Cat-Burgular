@@ -3,6 +3,6 @@ class GuardGameObject extends GameObject {
     super('Guard');
     this.w = this.h = 28;
     this.addComponent(new SpriteController('guard'));
-    this.addComponent(new GuardController(), patrol);
+    this.addComponent(new GuardController(), { ...patrol, speed: patrol.speed * 1.5 });
   }
 }

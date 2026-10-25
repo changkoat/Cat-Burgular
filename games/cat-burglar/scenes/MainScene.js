@@ -15,7 +15,7 @@ class MainScene extends Scene {
     // The bag's position is local to the cat, so the engine moves it with its parent.
     this.cat.bag = this.instantiate(new LootBagGameObject(), new Vector2(20, 15));
     this.cat.bag.transform.setParent(this.cat.transform);
-    this.exit = { transform: { position: new Vector2(...this.level.exit) }, w: 54, h: 54 };
+    this.exit = this.instantiate(new DoorGameObject(), new Vector2(...this.level.exit));
     this.instantiate(new HudGameObject('points'), new Vector2(26, 30));
     this.instantiate(new HudGameObject('loot'), new Vector2(290, 30));
     this.instantiate(new HudGameObject('level'), new Vector2(590, 30));
@@ -23,8 +23,7 @@ class MainScene extends Scene {
   }
 
   overlaps(a, b) {
-    const p = a.transform.position, q = b.transform.position;
-    return p.x < q.x + b.w && p.x + a.w > q.x && p.y < q.y + b.h && p.y + a.h > q.y;
+    return GameCollisions.isCollisionPolygonPolygon(a, b);
   }
 
   restart() { Globals.go(MainScene); }
@@ -40,7 +39,12 @@ class MainScene extends Scene {
     if (won) {
       // Points become permanent only after the cat leaves the room successfully.
       Globals.score += this.points * 100;
-      Globals.go(Globals.levelIndex === LEVELS.length - 1 ? WinScene : IntermissionScene);
+      if (Globals.levelIndex === LEVELS.length - 1) {
+        Globals.go(WinScene);
+      } else {
+        Globals.levelIndex++;
+        Globals.go(MainScene);
+      }
     } else {
       Globals.go(GameOverScene);
     }
@@ -79,11 +83,6 @@ class MainScene extends Scene {
         ctx.strokeRect(x, y, Math.min(40, this.level.width - 24 - x), Math.min(40, this.level.height - 24 - y));
       }
     }
-    const exit = this.exit.transform.position;
-    ctx.fillStyle = this.points === this.loot.length ? '#8cdbac' : '#4e7b61';
-    ctx.fillRect(exit.x, exit.y, 54, 54);
-    ctx.fillStyle = '#142d22'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText('EXIT', exit.x + 27, exit.y + 31);
     // Draw the room under the camera; draw the HUD after restoring the screen position.
     for (const object of this.gameObjects) {
       if (object.layer !== 'UI') object.draw(ctx);
